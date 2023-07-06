@@ -16,8 +16,9 @@
         <div class="card custom-card w-50">
             <div class="card-body">
                 <h3 class="card-title text-center">Register</h3>
-                <form class="needs-validation" novalidate>
+                <form class="needs-validation" novalidate method="POST" action="backend.php">
                     <div class="row">
+                        <input type="hidden" name="formIdentifier" value="form1">
 
                         <div class="col-6">
                             <div class="mb-3">
@@ -50,6 +51,14 @@
                     <div class="mb-3">
                         <label for="addressInput" class="form-label">Address</label>
                         <input type="text" class="form-control" id="addressInput">
+                        <div class="invalid-feedback">
+                            Address must be atleast 5 characters long.
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="emailInput" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="emailInput">
                         <div class="invalid-feedback">
                             Address must be atleast 5 characters long.
                         </div>
@@ -105,6 +114,12 @@
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </form>
 
+                <?php
+                $var = $_GET['message'];
+                if (isset($var)) {
+                    echo "<p style='color:red;' class='text-center'>$var</p>";
+                }
+                ?>
 
 
             </div>
