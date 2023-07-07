@@ -7,7 +7,7 @@
     <title>Clinic System</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
-    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 
 <body>
@@ -16,14 +16,15 @@
         <div class="card custom-card w-50">
             <div class="card-body">
                 <h3 class="card-title text-center">Register</h3>
-                <form class="needs-validation" novalidate method="POST" action="backend.php">
+                <form id="registrationForm" class="needs-validation" novalidate method="POST" action="backend.php">
                     <div class="row">
                         <input type="hidden" name="formIdentifier" value="form1">
 
                         <div class="col-6">
                             <div class="mb-3">
                                 <label for="firstNameInput" class="form-label">First Name</label>
-                                <input type="text" class="form-control custom-name" id="firstNameInput" required>
+                                <input type="text" class="form-control custom-name" name="firstNameInput"
+                                    id="firstNameInput" required>
                                 <div class="invalid-feedback">
                                     First name should have at least 3 characters and no numbers.
                                 </div>
@@ -32,7 +33,8 @@
                         <div class="col-6">
                             <div class="mb-3">
                                 <label for="lastNameInput" class="form-label">Last Name</label>
-                                <input type="text" class="form-control custom-name" id="lastNameInput" required>
+                                <input type="text" class="form-control custom-name" name="lastNameInput"
+                                    id="lastNameInput" required>
                                 <div class="invalid-feedback">
                                     Last name should have at least 3 characters and no numbers.
                                 </div>
@@ -42,7 +44,7 @@
 
                     <div class="mb-3">
                         <label for="userNameInput" class="form-label">Username</label>
-                        <input type="text" class="form-control" id="userNameInput">
+                        <input type="text" class="form-control" name="userNameInput" id="userNameInput">
                         <div class="invalid-feedback">
                             Username must be atleast 3 characters long.
                         </div>
@@ -50,7 +52,7 @@
 
                     <div class="mb-3">
                         <label for="addressInput" class="form-label">Address</label>
-                        <input type="text" class="form-control" id="addressInput">
+                        <input type="text" class="form-control" name="addressInput" id="addressInput">
                         <div class="invalid-feedback">
                             Address must be atleast 5 characters long.
                         </div>
@@ -58,7 +60,7 @@
 
                     <div class="mb-3">
                         <label for="emailInput" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="emailInput">
+                        <input type="email" class="form-control" name="emailInput" id="emailInput">
                         <div class="invalid-feedback">
                             Address must be atleast 5 characters long.
                         </div>

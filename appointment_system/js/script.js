@@ -117,8 +117,8 @@ function passwordLength(input1, input2) {
                 let age2 = age.value;
                 let cPassword = confirmPassword(password.value, passwordMatch.value);
                 let tPassword = passwordLength(password.value, passwordMatch.value);
-                console.log(passwordMatch);
-                console.log(cPassword);
+                console.log(firstNameValid);
+                console.log(lastNameValid);
 
 
                 if (!tPassword || !cPassword || !dateValid || !firstNameValid || !lastNameValid || !userNameValid | !addressValid || age2 < 0) {
@@ -141,7 +141,7 @@ function passwordLength(input1, input2) {
                         userNameInput.classList.add('is-invalid');
                     }
                     else {
-                        lastNameInput.classList.remove('is-invalid');
+                        userNameInput.classList.remove('is-invalid');
                     }
 
                     if (!addressValid) {
@@ -180,9 +180,6 @@ function passwordLength(input1, input2) {
                 }
 
 
-
-
-
             }
         }, false);
 
@@ -192,3 +189,140 @@ function passwordLength(input1, input2) {
     });
 })();
 
+
+
+
+// For best practice the below code should be use for multiple validation
+// (() => {
+//     'use strict';
+
+//     // Fetch all the forms we want to apply custom Bootstrap validation styles to
+//     const forms = document.querySelectorAll('.needs-validation');
+
+//     // Loop over them and prevent submission
+//     Array.from(forms).forEach((form) => {
+
+//         const formId = form.getAttribute('id');
+
+//         if (formId === "registrationForm") {
+
+//             form.addEventListener('submit', (event) => {
+//                 if (!form.checkValidity()) {
+//                     event.preventDefault();
+//                     event.stopPropagation();
+//                 } else {
+
+//                     const firstNameInput = form.querySelector('#firstNameInput');
+//                     const lastNameInput = form.querySelector('#lastNameInput');
+//                     const userNameInput = form.querySelector('#userNameInput');
+//                     const addressInput = form.querySelector('#addressInput');
+//                     const birthdateInput = document.getElementById('birthdateInput');
+//                     const birthdateValue = birthdateInput.value.trim();
+//                     const passwordMatch = form.querySelector('#cPassword');
+//                     const password = form.querySelector('#Password');
+
+//                     let firstNameValid = validateNameInput(firstNameInput);
+//                     let lastNameValid = validateNameInput(lastNameInput);
+//                     let userNameValid = validateUser(userNameInput);
+//                     let addressValid = validateAddress(addressInput);
+//                     let dateValid = validateDateInput(birthdateValue);
+//                     let age = form.querySelector("#ageInput");
+//                     let age2 = age.value;
+//                     let cPassword = confirmPassword(password.value, passwordMatch.value);
+//                     let tPassword = passwordLength(password.value, passwordMatch.value);
+//                     console.log(passwordMatch);
+//                     console.log(cPassword);
+
+
+//                     if (!tPassword || !cPassword || !dateValid || !firstNameValid || !lastNameValid || !userNameValid | !addressValid || age2 < 0) {
+//                         event.preventDefault();
+//                         event.stopPropagation();
+
+//                         if (!firstNameValid) {
+//                             firstNameInput.classList.add('is-invalid');
+//                         } else {
+//                             firstNameInput.classList.remove('is-invalid');
+//                         }
+
+//                         if (!lastNameValid) {
+//                             lastNameInput.classList.add('is-invalid');
+//                         } else {
+//                             lastNameInput.classList.remove('is-invalid');
+//                         }
+
+//                         if (!userNameValid) {
+//                             userNameInput.classList.add('is-invalid');
+//                         }
+//                         else {
+//                             lastNameInput.classList.remove('is-invalid');
+//                         }
+
+//                         if (!addressValid) {
+//                             addressInput.classList.add('is-invalid');
+//                         }
+//                         else {
+//                             addressInput.classList.remove('is-invalid');
+//                         }
+
+//                         if (!dateValid) {
+//                             birthdateInput.classList.add('is-invalid');
+//                         }
+//                         else {
+//                             birthdateInput.classList.remove('is-invalid');
+//                         }
+
+//                         if (age2 < 0) {
+//                             age.classList.add('is-invalid');
+//                         }
+//                         else {
+//                             age.classList.remove('is-invalid');
+//                         }
+//                         if (!cPassword) {
+//                             passwordMatch.classList.add("is-invalid");
+//                         }
+//                         else {
+//                             passwordMatch.classList.remove('is-invalid');
+//                         }
+
+//                         if (!tPassword) {
+//                             password.classList.add("is-invalid");
+//                         }
+//                         else {
+//                             password.classList.remove('is-invalid');
+//                         }
+//                     }
+//                 }
+//             }, false);
+
+//             form.addEventListener('click', () => {
+//                 form.classList.remove('was-validated');
+//             });
+
+//         }
+//         else if (formId === "loginForm") {
+//             form.addEventListener('submit', (event) => {
+//                 if (!form.checkValidity()) {
+//                     event.preventDefault();
+//                     event.stopPropagation();
+//                 } else {
+
+//                     const errorMessage = url.searchParams.get('message');
+
+//                     if (errorMessage === "Invalid credentials please try again.") {
+//                         const userLoginInput = form.querySelector('#userName');
+//                         const passLoginInput = form.querySelector('#Password');
+
+//                         userLoginInput.classList.add("is-invalid");
+//                         passLoginInput.classList.add("is-invalid");
+//                     }
+
+//                 }
+//             }, false);
+
+//             form.addEventListener('click', () => {
+//                 form.classList.remove('was-validated');
+//             });
+//         }
+
+//     });
+// })();

@@ -1,3 +1,11 @@
 .form-control.is-invalid {
     background-image: none;
 }
+
+.card {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    border-radius: 30px;
+    transform: translateY(-5px);
+    border: 1px solid #ccc;
+    padding: 15px;
+}
