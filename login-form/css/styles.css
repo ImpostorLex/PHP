@@ -1,0 +1,173 @@
+.form-control.is-invalid {
+    background-image: none;
+}
+
+.bg-nav {
+    background-color: #b9b0a8;
+}
+
+a:hover {
+    color: #cdc4bc;
+}
+
+
+a {
+    text-decoration: none;
+    color: black;
+}
+
+.img-responsive-custom {
+    max-width: 100%;
+    height: auto;
+}
+
+.card-bg {
+    background-color: #d7dcd0;
+}
+
+.card-img-top {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.card {
+    padding: 15px;
+}
+
+.card-2 {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    border-radius: 30px;
+    transform: translateY(-5px);
+    border: 1px solid #ccc;
+    padding: 15px;
+}
+
+.borderless-button {
+    background: none;
+    border: none;
+    color: black;
+    text-decoration: underline;
+    cursor: pointer;
+    text-transform: lowercase;
+}
+
+.borderless-button:hover {
+    color: #cdc4bc;
+}
+
+
+/* Cart styling */
+.popup-container {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    z-index: 9999;
+    text-align: center;
+    width: 400px;
+    border-radius: 8px;
+    font-family: "Helvetica", sans-serif;
+    line-height: 1.5;
+
+}
+
+.popup-container button {
+    border-radius: 4px;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+
+.popup-container.active {
+    display: block;
+}
+
+
+
+.icon-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+
+.buy-button {
+    background-color: #4CAF50;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* Show pop-up error message design  */
+.popup-container2 {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    z-index: 9999;
+    text-align: center;
+    width: 400px;
+    filter: none;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    z-index: 9999;
+    text-align: center;
+    width: 400px;
+}
+
+
+.popup-container2.active {
+    display: block;
+}
+
+/* Cart styling */
+
+#cartTable th,
+#cartTable td {
+    padding: 8px;
+    /* Adjust the value as per your preference */
+}
+
+.hovertext {
+    position: relative;
+}
+
+.hovertext:before {
+    content: attr(data-hover);
+    visibility: hidden;
+    opacity: 0;
+    width: 140px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 5px;
+    padding: 5px 0;
+    transition: opacity 1s ease-in-out;
+
+    position: absolute;
+    z-index: 1;
+    left: 0;
+    top: 110%;
+}
+
+.hovertext:hover:before {
+    opacity: 1;
+    visibility: visible;
+}
