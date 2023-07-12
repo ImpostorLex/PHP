@@ -8,11 +8,14 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
     <link rel="stylesheet" href="css/styles.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+
     <script src="https://kit.fontawesome.com/b5d820a994.js" crossorigin="anonymous"></script>
 </head>
 
 
 <body>
+
 
     <div class="container-fluid" id="wrapper">
         <div class="row">
@@ -55,7 +58,8 @@
                     <div class="card card-2 custom-card w-50">
                         <div class="card-body">
                             <h3 class="card-title text-center">Add Food Form</h3>
-                            <form id="registrationForm" class="needs-validation" method="POST" action="backend.php">
+                            <form id="registrationForm" enctype="multipart/form-data" class="needs-validation"
+                                method="POST" action="backend.php">
                                 <div class="row">
                                     <input type="hidden" name="formIdentifier" value="form3">
 
@@ -81,11 +85,19 @@
                                     </div>
                                 </div>
 
+                                <select class="form-select" id="category" name="category"
+                                    aria-label="Default select example">
+                                    <option selected value="On the stick food">On the stick food</option>
+                                    <option value="Drinks">Drinks</option>
+                                    <option value="Food">Food</option>
+                                </select>
+
                                 <div class="mb-3">
                                     <label for="uploadButton" class="form-label">Image</label>
-                                    <input type="file" class="form-control" name="uploadButton" id="uploadButton">
+                                    <input required type="file" class="form-control" name="uploadButton"
+                                        id="uploadButton">
                                     <div class="invalid-feedback">
-                                        Image only.
+                                        Image only (.png, .jpeg, .jpg)
                                     </div>
                                 </div>
                                 <button type="submit" class="btn btn-primary">Submit</button>
@@ -97,15 +109,77 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+
+    <!-- Success Modal -->
+    <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-success" id="successModalLabel">Success</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Product creation is successful.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Failure Modal -->
+    <div class="modal fade" id="failureModal" tabindex="-1" role="dialog" aria-labelledby="failureModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-danger" id="failureModalLabel">Failure</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Failed to insert the product.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <?php
+    if (isset($_GET['message'])) {
+        $msg = $_GET['message'];
+        if ($msg == 'True') {
+            echo "<script type='text/javascript'>
+            $(document).ready(function(){
+$('#successModal').modal('show');
+});
+            </script>";
+        } else if ($msg == 'Failed to insert the product.' || $msg == 'Something went wrong!') {
+            echo "<script type='text/javascript'>
+            $(document).ready(function(){
+$('#failureModal').modal('show');
+});
+            </script>";
+        }
+    }
+    ?>
 
 
 
 
-
-            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
-                integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
-                crossorigin="anonymous"></script>
-            <script src="js/update-create.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous">
+        </script>
+    <script src="js/update-create.js"></script>
 </body>
 
 

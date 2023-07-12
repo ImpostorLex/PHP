@@ -11,10 +11,12 @@ function hasLetters(input) {
 }
 
 function validateImage(file) {
-    const allowedExtensions = ['.png', '.jpeg'];
+    const allowedExtensions = ['.png', '.jpeg', '.jpg'];
     const fileName = file.name;
     console.log(fileName);
     const fileExtension = fileName.substring(fileName.lastIndexOf('.')).toLowerCase();
+    console.log('File Extension:', fileExtension);
+    console.log('Allowed Extensions:', allowedExtensions);
     return allowedExtensions.includes(fileExtension);
 }
 
@@ -43,7 +45,7 @@ function validateImage(file) {
 
                 let firstNameValid = validateNameInput(foodName);
                 let lastNameValid = hasLetters(priceInput);
-                let userNameValid = validateImage(uploadInput);
+                let userNameValid = validateImage(uploadInput.files[0]);
 
                 if (!firstNameValid || !lastNameValid || !userNameValid) {
                     event.preventDefault();

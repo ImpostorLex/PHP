@@ -4,6 +4,9 @@ $username = "root";
 $password_db = "";
 $db = "clinic_db";
 
+
+session_start();
+
 function getAllUser()
 {
     global $servername, $username, $password_db, $db;
@@ -150,7 +153,7 @@ function credsMatch($username_form, $password_form)
                     exit;
                 } else {
                     // Change home.php to whatever the homepage after succesful login
-                    header("Location: admin.php");
+                    header("Location: search.php");
                     exit;
                 }
 
@@ -170,7 +173,195 @@ function credsMatch($username_form, $password_form)
     }
 }
 
+function isProductExists($name)
+{
+    global $servername, $username, $password_db, $db;
+    $mysqli = new mysqli($servername, $username, $password_db, $db);
 
+    if ($mysqli->connect_errno) {
+        die("Connection failed: " . $mysqli->connect_error);
+    } else {
+        $sql = "SELECT name FROM product WHERE name = ?";
+
+        $stmt = $mysqli->prepare($sql);
+        $stmt->bind_param("s", $name);
+
+        // Execute the statement and check if it was successful
+        if ($stmt->execute()) {
+            $result = $stmt->get_result();
+
+            // If there is a result, it means the product already exists
+            if ($result->num_rows > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            // Execution failed
+            $status_msg = "Failed to check if the product exists.";
+            header("Location: error.php?message=" . urlencode($status_msg));
+            exit;
+        }
+    }
+}
+
+function addProduct($name, $price, $category, $image_name, $image_tmp_path)
+{
+    $destination = "upload-files/" . $image_name;
+
+    global $servername, $username, $password_db, $db;
+    $mysqli = new mysqli($servername, $username, $password_db, $db);
+
+    if ($mysqli->connect_error) {
+        die("Connection failed: " . $mysqli->connect_error);
+    } else {
+
+        // Before executing the insert check if product exists
+        $result = isProductExists($name);
+        if (!$result) {
+            $sql = "INSERT INTO product (id, name, price, category, image_path) VALUES (?, ?, ?, ?, ?)";
+
+            $stmt = $mysqli->prepare($sql);
+            $id = 0;
+            $stmt->bind_param("isiss", $id, $name, $price, $category, $image_name);
+
+            // Execute the statement and check if it was successful
+            if ($stmt->execute()) {
+                // Move the file as well.
+                move_uploaded_file($image_tmp_path, $destination);
+
+                $status_msg = "True";
+                header("Location: create.php?message=" . urlencode($status_msg));
+                exit;
+
+            } else {
+                // Insertion failed
+                $status_msg = "Failed to insert the product.";
+                header("Location: create.php?message=" . urlencode($status_msg));
+                exit;
+            }
+
+        } else {
+            $status_msg = "Something went wrong!";
+            header("Location: create.php?message=" . urlencode($status_msg));
+            exit;
+        }
+
+    }
+}
+function updateProduct($name, $price, $category, $image_name, $image_tmp_path)
+{
+    global $servername, $username, $password_db, $db;
+    $mysqli = new mysqli($servername, $username, $password_db, $db);
+
+    if ($mysqli->connect_error) {
+        die("Connection failed: " . $mysqli->connect_error);
+    } else {
+        // Get the product ID from the URL or another source
+        if (isset($_COOKIE['foodName'])) {
+            $foodName = $_COOKIE['foodName'];
+        }
+
+        // Check if the product name already exists
+        $sql = "SELECT * FROM product WHERE name = '$name'";
+        $result = $mysqli->query($sql);
+
+        if ($result->num_rows === 0 || ($result->num_rows === 1 && $name === $foodName)) {
+            // No conflicting product names found or the name remains unchanged
+            $destination = "upload-files/" . $image_name;
+            move_uploaded_file($image_tmp_path, $destination);
+            formUpdate($name, $price, $category, $image_name, $image_tmp_path);
+        } else {
+            // Conflicting product name found
+            // Redirect to an appropriate page with an error message or handle the situation accordingly
+            header("Location: test.php?message=Product name already exists");
+            exit;
+        }
+    }
+}
+
+
+
+
+function generateRandomString($length = 15)
+{
+    $characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    $randomString = '';
+
+    for ($i = 0; $i < $length; $i++) {
+        $randomString .= $characters[rand(0, strlen($characters) - 1)];
+    }
+
+    return $randomString;
+}
+
+function prefillform($id)
+{
+    global $servername, $username, $password_db, $db;
+    $mysqli = new mysqli($servername, $username, $password_db, $db);
+
+    if ($mysqli->connect_error) {
+        die("Connection failed: " . $mysqli->connect_error);
+    } else {
+        // Get the product ID from the URL or another source
+
+        $sql = "SELECT * FROM product WHERE id = $id limit 1";
+        $result = $mysqli->query($sql);
+
+        if ($result->num_rows === 1) {
+            $row = $result->fetch_assoc();
+
+            // Retrieve the data from the row
+            $id = $row['id'];
+            $foodName = $row['name'];
+            $price = $row['price'];
+            $category = $row['category'];
+
+            setcookie('foodName', $foodName, time() + (86400 * 30), '/');
+            setcookie('id', $id, time() + (86400 * 30), '/');
+            $randomString = generateRandomString(15);
+
+            header("Location: update.php?token=" . urlencode($randomString) . "&message=" . urlencode($foodName) . "&price=" . urlencode($price) . "&category=" . urlencode($category));
+            exit;
+
+
+        } else {
+            // Handle the case where the user ID is not found in the database
+            header("Location: test.php?message=User does not exists");
+            exit;
+        }
+    }
+}
+
+function formUpdate($name, $price, $category, $image_name, $image_tmp_path)
+{
+    global $servername, $username, $password_db, $db;
+    $mysqli = new mysqli($servername, $username, $password_db, $db);
+
+    // Get the product ID from the URL or another source
+    if (isset($_COOKIE['id'])) {
+        $id = $_COOKIE['id'];
+    }
+
+    if ($mysqli->connect_error) {
+        die("Connection failed: " . $mysqli->connect_error);
+    } else {
+        $sql = "UPDATE product SET name = ?, price = ?, category = ?, image_path = ? WHERE id = ?";
+        $stmt = $mysqli->prepare($sql);
+        $stmt->bind_param("ssssi", $name, $price, $category, $image_name, $id);
+
+        // Execute the prepared statement
+        if ($stmt->execute()) {
+            // Update successful
+            header("Location: update.php?message=True");
+            exit;
+        } else {
+            // Update failed
+            header("Location: update.php?message=False");
+            exit;
+        }
+    }
+}
 
 if (isset($_POST['formIdentifier'])) {
     $formIdentifier = $_POST['formIdentifier'];
@@ -215,6 +406,35 @@ if (isset($_POST['formIdentifier'])) {
         $username_form = $_POST['userName'];
         $password_form = $_POST['Password'];
         credsMatch($username_form, $password_form);
+
+
+        // Create Form
+    } elseif ($formIdentifier === 'form3') {
+
+        $name = $_POST['firstNameInput'];
+        $price = $_POST['lastNameInput'];
+        $cat = $_POST['category'];
+        $image = $_FILES['uploadButton'];
+        $image_name = $image['name'];
+        $fileTmpPath = $image["tmp_name"];
+
+        addProduct($name, $price, $cat, $image_name, $fileTmpPath);
+
+    } elseif ($formIdentifier === 'form4') {
+        $name = $_POST['firstNameInput'];
+        $price = $_POST['lastNameInput'];
+        $cat = $_POST['category'];
+        $image = $_FILES['uploadButton'];
+        $image_name = $image['name'];
+        $fileTmpPath = $image["tmp_name"];
+
+        updateProduct($name, $price, $cat, $image_name, $fileTmpPath);
+
+    } elseif ($formIdentifier === 'form5') {
+
+        $id = $_POST['uploadButton'];
+
+        prefillform($id);
     } else {
         $status_msg = "Something unexpected happen please try again.";
         header("Location: login.php?message=" . urlencode($status_msg));
