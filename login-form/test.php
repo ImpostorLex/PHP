@@ -1,30 +1,52 @@
-<?php
+<!DOCTYPE html>
+<html lang="en">
 
-if (isset($_FILES['uploadButton'])) {
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clinic System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+</head>
 
-    $image = $_FILES['uploadButton'];
-    $image_name = $image['name'];
-    $fileTmpPath = $image["tmp_name"];
-    $destination = "upload-files/" . $image_name;
-    $result = move_uploaded_file($fileTmpPath, $destination);
+<body>
 
-    echo $result;
+    <div class="d-flex justify-content-evenly align-items-center" style="height: 100vh;">
+        <div class="card card-2 custom-card w-25">
+            <div class="card-body">
+                <h3 class="card-title text-danger">Delete Confirmation</h3>
+                <!-- confirm_delete.php -->
+                <html>
 
-}
+                <body>
+                    <p></p>Are you sure you want to delete this record?
+                    <?php echo $_GET['id']; ?>
+                    </p>
+                    <br>
+                    <form method="POST" action="backend.php">
+                        <input type="hidden" name="formIdentifier" value="form6">
+                        <input type="hidden" name="id" value="<?php echo $_GET['id']; ?>">
+                        <button type="submit" class="btn btn-danger" name="confirmationButton"
+                            value="confirm">Confirm</button>
+                        &nbsp;
+                        <a class="btn btn-secondary" href="search.php">Go Back!</a>
+                    </form>
+                </body>
 
+                </html>
 
-?>
-
-<form id="registrationForm" enctype="multipart/form-data" class="needs-validation" method="POST" action="backend.php">
-    <div class="row">
-        <input type="hidden" name="formIdentifier" value="form5">
-
-        <div class="mb-3">
-            <label for="uploadButton" class="form-label">Image</label>
-            <input type="number" class="form-control" name="uploadButton" id="uploadButton">
-            <div class="invalid-feedback">
-                Image only (.png, .jpeg, .jpg)
             </div>
         </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
-</form>
+    </div>
+
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

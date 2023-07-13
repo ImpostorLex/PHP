@@ -30,9 +30,9 @@
                             </a>
                         </li>
                         <li class="nav-item pt-2 pb-2">
-                            <a href="" class="nav-link py-3 px-2 hovertext" data-hover="Update" title=""
+                            <a href="search.php" class="nav-link py-3 px-2 hovertext" data-hover="Search" title=""
                                 data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Dashboard">
-                                <i class="fa-solid fa-sharp fa-pen" style="color:white;"></i>
+                                <i class="fa-solid fa-magnifying-glass" style="color:white;"></i>
                             </a>
                         </li>
                         <li class="nav-item pt-2 pb-2">

@@ -4,9 +4,6 @@ $username = "root";
 $password_db = "";
 $db = "clinic_db";
 
-
-session_start();
-
 function getAllUser()
 {
     global $servername, $username, $password_db, $db;
@@ -317,8 +314,20 @@ function prefillform($id)
             $price = $row['price'];
             $category = $row['category'];
 
-            setcookie('foodName', $foodName, time() + (86400 * 30), '/');
-            setcookie('id', $id, time() + (86400 * 30), '/');
+            setcookie('foodName', $foodName, [
+                'expires' => time() + (86400 * 30),
+                'path' => '/',
+                'secure' => true,
+                'samesite' => 'None'
+            ]);
+
+            setcookie('id', $id, [
+                'expires' => time() + (86400 * 30),
+                'path' => '/',
+                'secure' => true,
+                'samesite' => 'None'
+            ]);
+
             $randomString = generateRandomString(15);
 
             header("Location: update.php?token=" . urlencode($randomString) . "&message=" . urlencode($foodName) . "&price=" . urlencode($price) . "&category=" . urlencode($category));
@@ -326,8 +335,9 @@ function prefillform($id)
 
 
         } else {
-            // Handle the case where the user ID is not found in the database
-            header("Location: test.php?message=User does not exists");
+            // user ID is not found in the database
+            $randomString = generateRandomString(15);
+            header("Location: search.php?token=" . $randomString . "&st_message=User_e");
             exit;
         }
     }
@@ -353,15 +363,43 @@ function formUpdate($name, $price, $category, $image_name, $image_tmp_path)
         // Execute the prepared statement
         if ($stmt->execute()) {
             // Update successful
-            header("Location: update.php?message=True");
+            header("Location: update.php?st_message=True");
             exit;
         } else {
             // Update failed
-            header("Location: update.php?message=False");
+            header("Location: update.php?st_message=False");
             exit;
         }
     }
 }
+
+function deleteProd($id)
+{
+    global $servername, $username, $password_db, $db;
+    $mysqli = new mysqli($servername, $username, $password_db, $db);
+
+    if ($mysqli->connect_error) {
+        die("Connection failed: " . $mysqli->connect_error);
+    } else {
+        $sql = "DELETE FROM product where id = ?";
+        $stmt = $mysqli->prepare($sql);
+        $stmt->bind_param("i", $id);
+
+        // Execute the prepared statement
+        $stmt->execute();
+
+        // Check the affected rows
+        if ($stmt->affected_rows > 0) {
+            header("Location: search.php?st_message=product_s");
+            exit();
+        } else {
+            header("Location: search.php?st_message=product_f");
+            exit();
+        }
+    }
+}
+
+
 
 if (isset($_POST['formIdentifier'])) {
     $formIdentifier = $_POST['formIdentifier'];
@@ -432,9 +470,22 @@ if (isset($_POST['formIdentifier'])) {
 
     } elseif ($formIdentifier === 'form5') {
 
-        $id = $_POST['uploadButton'];
+        $id = trim($_POST['search_term']);
 
-        prefillform($id);
+
+        if (isset($id) && !ctype_digit($id)) {
+            header("Location: search.php?st_message=not_digit");
+            exit();
+        } elseif (isset($_POST['updateButton']) && $_POST['updateButton'] === 'update') {
+            prefillform($id);
+        } elseif (isset($_POST['deleteButton']) && $_POST['deleteButton'] === 'delete') {
+            header("Location: test.php?id=" . $id);
+            exit();
+        }
+
+
+    } elseif ($formIdentifier === 'form6') {
+        deleteProd($id);
     } else {
         $status_msg = "Something unexpected happen please try again.";
         header("Location: login.php?message=" . urlencode($status_msg));

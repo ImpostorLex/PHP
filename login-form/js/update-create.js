@@ -1,9 +1,11 @@
 
 function validateNameInput(input) {
     const value = input.value.trim();
+    const hasSpecialChars = /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]+/.test(value);
     const hasNumbers = /\d/.test(value);
-    return value.length >= 3 && !hasNumbers;
+    return value.length >= 3 && !hasSpecialChars && !hasNumbers;
 }
+
 
 function hasLetters(input) {
     var regex = /[a-zA-Z]/; // Regular expression to match any letter

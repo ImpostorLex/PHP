@@ -3,3 +3,4 @@
 3. Fix title website
 4. Fix Links
 5. Change update and create.php success insertion/update to search.php
+6. Add search in sidebar
