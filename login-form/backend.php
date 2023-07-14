@@ -1,8 +1,17 @@
 <?php
 $servername = "localhost";
 $username = "root";
-$password_db = "";
+$password_db = "NEW_PASSWORD";
 $db = "clinic_db";
+
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+use PHPMailer\PHPMailer\SMTP;
+
+require 'sendmailf/PHPMailer-master/src/Exception.php';
+require 'sendmailf/PHPMailer-master/src/PHPMailer.php';
+require 'sendmailf/PHPMailer-master/src/SMTP.php';
 
 function getAllUser()
 {
@@ -399,6 +408,202 @@ function deleteProd($id)
     }
 }
 
+function deleteSubscriber($id)
+{
+    global $servername, $username, $password_db, $db;
+    $mysqli = new mysqli($servername, $username, $password_db, $db);
+
+    if ($mysqli->connect_error) {
+        die("Connection failed: " . $mysqli->connect_error);
+    } else {
+        $sql = "DELETE FROM subscribed where user_acc_fk = ?";
+        $stmt = $mysqli->prepare($sql);
+        $stmt->bind_param("i", $id);
+
+        // Execute the prepared statement
+        $stmt->execute();
+
+        // Check the affected rows
+        if ($stmt->affected_rows > 0) {
+            header("Location: email.php?st_message=e_s");
+            exit();
+        } else {
+            header("Location: email.php?st_message=e_f");
+            exit();
+        }
+    }
+}
+
+function getSubscriber($title, $txtBody, $sender)
+{
+    global $servername, $username, $password_db, $db;
+    $mysqli = new mysqli($servername, $username, $password_db, $db);
+
+    if ($mysqli->connect_errno) {
+        die("Connection failed: " . $mysqli->connect_error);
+    } else {
+        $sql = "SELECT user_acc_fk FROM subscribed";
+        $result = $mysqli->query($sql);
+
+        $user_ids = array(); // Array to store user IDs
+
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $user_ids[] = $row['user_acc_fk'];
+            }
+
+            // Use placeholder for the IN clause based on the number of user IDs
+            $placeholders = implode(',', array_fill(0, count($user_ids), '?'));
+
+            $sql2 = "SELECT email, first_name FROM user WHERE id IN ($placeholders) limit 2";
+            $stmt = $mysqli->prepare($sql2);
+
+            // Bind the user IDs as parameters
+            $stmt->bind_param(str_repeat('i', count($user_ids)), ...$user_ids);
+            $stmt->execute();
+            $result2 = $stmt->get_result();
+
+            $emails = array();
+
+            if ($result2->num_rows > 0) {
+                while ($row2 = $result2->fetch_assoc()) {
+                    $emails[] = $row2['email'];
+                }
+            }
+
+            $mail = new PHPMailer(true);
+            $mail->SMTPDebug = SMTP::DEBUG_SERVER;
+            $mail->isSMTP();
+            $mail->SMTPAuth = true;
+            $mail->SMTPSecure = 'tls'; // Enable TLS encryption, 'ssl' also accepted
+            $mail->Host = 'smtp.gmail.com';
+            $mail->Port = 587;
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Username = ""; // Your Gmail email address
+            $mail->Password = ''; // Your Gmail password or app-specific password
+
+            $mail->setFrom($sender, 'KantoFoodKing'); // Sender email address and name
+
+            // Add all recipients
+            // foreach ($emails as $email) {
+            //     $mail->addAddress($email); // Recipient email address
+            // }
+
+            $mail->addAddress(""); // Recipient email address
+
+
+            $mail->Subject = $title;
+            $mail->Body = $txtBody;
+            $mysqli->close();
+            if ($mail->send()) {
+                return 'email_t';
+            } else {
+                return 'email_f';
+
+            }
+
+        } else {
+            return "No_em";
+        }
+
+
+    }
+}
+
+
+function sendNewsletter($title, $txtBody)
+{
+    $sender = "navarrojr.dennis@ue.edu.ph";
+    global $servername, $username, $password_db, $db;
+    $mysqli = new mysqli($servername, $username, $password_db, $db);
+
+    if ($mysqli->connect_error) {
+        die("Connection failed: " . $mysqli->connect_error);
+    } else {
+        // Verify if there is any subscriber.
+        $sql = "SELECT COUNT(*) from subscribed";
+        $result = $mysqli->query($sql);
+
+
+        // Check the affected rows
+        if ($result->num_rows > 0) {
+
+            $tas_msg = getSubscriber($title, $txtBody, $sender);
+
+            if ($tas_msg === 'email_t') {
+                header("Location: email.php?st_message=e_ss");
+                exit();
+            } elseif ($tas_msg === 'email_f') {
+                header("Location: send_email.php?st_message=e_fs");
+                exit();
+            } else {
+                header("Location: send_email.php?st_message=e_ue");
+                exit();
+            }
+
+
+        } else {
+            header("Location: send_email.php?st_message=e_f");
+            exit();
+        }
+    }
+
+}
+
+function subscribe($email)
+{
+    global $servername, $username, $password_db, $db;
+    $mysqli = new mysqli($servername, $username, $password_db, $db);
+
+    if ($mysqli->connect_error) {
+        die("Connection failed: " . $mysqli->connect_error);
+    } else {
+        $emails = getEmails();
+
+        // Check if email is registered to the website
+        if (in_array($email, $emails)) {
+            // Verify if user is already subscribed
+            $sql = "SELECT user_id FROM user WHERE email = ?";
+            $stmt = $mysqli->prepare($sql);
+            $stmt->bind_param("s", $email);
+            $stmt->execute();
+            $result = $stmt->get_result();
+
+            if ($result->num_rows > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    $user_id = $row['user_id'];
+                }
+
+                $sql2 = "SELECT COUNT(*) AS count FROM subscribed WHERE user_acc_fk = ?";
+                $stmt2 = $mysqli->prepare($sql2);
+                $stmt2->bind_param("i", $user_id);
+                $stmt2->execute();
+                $result2 = $stmt2->get_result();
+
+                $row2 = $result2->fetch_assoc();
+                $subscriptionCount = $row2['count'];
+
+                if ($subscriptionCount > 0) {
+                    header("Location: home.php?i_e=alreadyS");
+                    exit();
+                } else {
+                    $sql3 = "INSERT INTO subscribed (id, user_acc_fk) VALUES (0, ?)";
+                    $stmt3 = $mysqli->prepare($sql3);
+                    $stmt3->bind_param("i", $user_id);
+                    $stmt3->execute();
+
+                    if ($stmt3->affected_rows > 0) {
+                        header("Location: home.php?i_e=ss");
+                        exit();
+                    }
+                }
+            } else {
+                header("Location: home.php?i_e=e_f");
+                exit();
+            }
+        }
+    }
+}
 
 
 if (isset($_POST['formIdentifier'])) {
@@ -486,6 +691,36 @@ if (isset($_POST['formIdentifier'])) {
 
     } elseif ($formIdentifier === 'form6') {
         deleteProd($id);
+    } elseif ($formIdentifier === 'form7') {
+
+        $id = trim($_POST['search_term']);
+
+        if (isset($id) && !ctype_digit($id)) {
+            header("Location: email.php?st_message=not_digit");
+            exit();
+        } else {
+            $randomString = generateRandomString(15);
+            header("Location: test2.php?token=" . $randomString . "&id=" . $id);
+            exit();
+        }
+    } elseif ($formIdentifier === 'form8') {
+
+        $id = $_POST['id'];
+
+        deleteSubscriber($id);
+
+
+    } elseif ($formIdentifier === 'form9') {
+
+        $title = $_POST['titleInput'];
+        $txtBody = $_POST['text-body'];
+        sendNewsletter($title, $txtBody);
+    } elseif ($formIdentifier === 'form10') {
+
+        $email = $_POST['form5Example2'];
+
+        subscribe($email);
+
     } else {
         $status_msg = "Something unexpected happen please try again.";
         header("Location: login.php?message=" . urlencode($status_msg));

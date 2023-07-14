@@ -8,23 +8,41 @@ $mysqli = new mysqli($servername, $username, $password_db, $db);
 
 if ($mysqli->connect_errno) {
     die("Connection failed: " . $mysqli->connect_error);
-
 } else {
-    $sql = "SELECT * from product";
+    $sql = "SELECT user_acc_fk FROM subscribed";
     $result = $mysqli->query($sql);
 
-    $usernames = array(); // Array to store usernames
+    $user_ids = array(); // Array to store user IDs
 
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
-            $products[] = $row;
+            $user_ids[] = $row['user_acc_fk'];
+        }
+
+        // Use placeholder for the IN clause based on the number of user IDs
+        $placeholders = implode(',', array_fill(0, count($user_ids), '?'));
+
+        $sql2 = "SELECT * FROM user WHERE user_id IN ($placeholders)";
+        $stmt = $mysqli->prepare($sql2);
+
+        // Bind the user IDs as parameters
+        $stmt->bind_param(str_repeat('i', count($user_ids)), ...$user_ids);
+        $stmt->execute();
+        $result2 = $stmt->get_result();
+
+        $emails = array();
+        if ($result2->num_rows > 0) {
+            while ($row2 = $result2->fetch_assoc()) {
+                $emails[] = $row2;
+            }
         }
     } else {
-        $stat_msg = "no_product";
+        $stat_msg = "No emails";
     }
 
     $mysqli->close();
 }
+
 ?>
 
 
@@ -58,7 +76,7 @@ if ($mysqli->connect_errno) {
                             </a>
                         </li>
                         <li class="nav-item pt-2 pb-2">
-                            <a href="" class="nav-link py-3 px-2 hovertext active" data-hover="Update" title=""
+                            <a href="" class="nav-link py-3 px-2 hovertext" data-hover="Update" title=""
                                 data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Dashboard">
                                 <i class="fa-solid fa-sharp fa-pen" style="color:white;"></i>
                             </a>
@@ -70,7 +88,7 @@ if ($mysqli->connect_errno) {
                             </a>
                         </li>
                         <li class="nav-item pt-2 pb-2">
-                            <a href="" class="nav-link py-3 px-2 hovertext" data-hover="Recipes" title=""
+                            <a href="" class="nav-link py-3 px-2 hovertext active" data-hover="Email" title=""
                                 data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Dashboard">
                                 <i class="fa-solid fa-envelope" style="color:white;"></i>
                             </a>
@@ -88,56 +106,42 @@ if ($mysqli->connect_errno) {
 
             <div class="col-lg-9 col-md-9 p-3 min-vh-100 mx-auto table-responsive-sm"
                 style="height: 50px; overflow: auto;">
-
-                <h1 class="text-center" style="color:#f55052;">Update / Delete Form</h1>
+                <h1 class="text-center" style="color:#f55052;">Newsletter subscribers</h1>
                 <br>
                 <?php
-                if (isset($stat_msg) && $stat_msg === 'no_product') {
-
-                    echo '
-        <div class="alert alert-warning alert-dismissible fade show" role="alert">
-  <strong>No product</strong> found in the database nothing to show for table
-  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-</div>
-        ';
-                } elseif (isset($_GET['st_message']) && $_GET['st_message'] === "User_e") {
+                if (isset($_GET['st_message']) && $_GET['st_message'] === "not_digit") {
                     echo '
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
-  <strong>ID inputted</strong> does not match any product
+  <strong>ID inputted</strong> is not a digit!
   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>';
-                } elseif (isset($_GET['st_message']) && $_GET['st_message'] === "not_digit") {
-                    echo '
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-  <strong>Inputted value</strong> is not a number.
-  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-</div>';
-                } elseif (isset($_GET['st_message']) && $_GET['st_message'] === "product_s") {
+                } elseif (isset($_GET['st_message']) && $_GET['st_message'] === "e_s") {
                     echo '
         <div class="alert alert-success alert-dismissible fade show" role="alert">
-  <strong>Deletion</strong> of record is successful.
+  <strong>Customer</strong> successfully remove from receiving newsletter
   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>';
-                } elseif (isset($_GET['st_message']) && $_GET['st_message'] === "product_f") {
+                } elseif (isset($_GET['st_message']) && $_GET['st_message'] === "e_f") {
                     echo '
         <div class="alert alert-warning alert-dismissible fade show" role="alert">
-  <strong>Deletion</strong> of record is unsuccessful, it is most likey <strong>product id</strong> given does not exists
+  <strong>Error</strong> customer is not successfully remove from receiving newsletter
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>';
+                } elseif (isset($_GET['st_message']) && $_GET['st_message'] === "e_ss") {
+                    echo '
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+  <strong>Newsletter</strong> sent to all subscribers!
   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>';
                 }
                 ?>
-
                 <form method="POST" action="backend.php" class="needs-validation">
-                    <input type="hidden" name="formIdentifier" value="form5">
+                    <input type="hidden" name="formIdentifier" value="form7">
 
                     <div class="input-group mb-3">
-                        <input type="number" class="form-control input-text" placeholder="Manipulate Product"
+                        <input type="number" class="form-control input-text" placeholder="Unsuscribe user"
                             id="search_term" name="search_term" required>
                         <div class="input-group-append">
-                            <button name="updateButton" value="update" type="submit"
-                                class="btn btn-outline-warning btn-lg hovertext" data-hover="Update">
-                                <i class="fa fa-pen"></i>
-                            </button>
                         </div>
                         &nbsp;
                         <div class="input-group-append">
@@ -158,37 +162,34 @@ if ($mysqli->connect_errno) {
                     <thead class="table-dark sticky-top">
                         <tr>
                             <th scope="col">ID</th>
-                            <th scope="col">Name</th>
-                            <th scope="col">Price</th>
-                            <th scope="col">Category</th>
-                            <th scope="col">Image</th>
+                            <th scope="col">First name</th>
+                            <th scope="col">Last name</th>
+                            <th scope="col">Email</th>
                         </tr>
                     </thead>
 
                     <tbody>
 
-                        <?php if (isset($products) && is_array($products) && count($products) > 0) {
-                            foreach ($products as $product) { ?>
+                        <?php if (isset($emails) && is_array($emails) && count($emails) > 0) {
+                            foreach ($emails as $email) { ?>
                                 <tr>
                                     <td>
-                                        <?php echo $product['id']; ?>
+                                        <?php echo $email['id']; ?>
                                     </td>
                                     <td>
-                                        <?php echo $product['name']; ?>
+                                        <?php echo $email['first_name']; ?>
                                     </td>
                                     <td>
-                                        <?php echo $product['price']; ?>
+                                        <?php echo $email['last_name']; ?>
                                     </td>
                                     <td>
-                                        <?php echo $product['category']; ?>
+                                        <?php echo $email['email']; ?>
                                     </td>
-                                    <td><img style="width:200px;" src="upload-files/<?php echo $product['image_path']; ?>"
-                                            alt="Product Image"></td>
                                 </tr>
                             <?php }
                         } else { ?>
                         <tr>
-                            <td colspan="6">No products found.</td>
+                            <td colspan="4">No subscribers found.</td>
                         </tr>
                         <?php } ?>
 

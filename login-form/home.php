@@ -1,3 +1,7 @@
+<?php
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -152,6 +156,8 @@
                     </div>
                 </div>
 
+                <h1 class="card-title pt-5" style="color:black;font-weight:900">Our Products</h1>
+
 
             </div>
         </div>
@@ -199,13 +205,18 @@
                         <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
                             <h5 class="text-uppercase mb-4 text-white text-bold">Sign up to our newsletter</h5>
 
-                            <div class="form-outline form-white mb-4">
-                                <input type="email" id="form5Example2" class="form-control" />
-                                <label class="form-label text-light" for="form5Example2">Email address</label>
-                            </div>
 
-                            <button type="submit" class="btn btn-block"
-                                style="background-color:#cdc4bc">Subscribe</button>
+                            <form method="POST" action="backend.php" class="needs-validation">
+                                <input type="hidden" name="formIdentifier" value="form10">
+
+                                <div class="form-outline form-white mb-4">
+                                    <input type="email" name="form5Example2" id="form5Example2" class="form-control" />
+                                    <label class="form-label text-light" for="form5Example2">Email address</label>
+                                </div>
+
+                                <button type="submit" class="btn btn-block"
+                                    style="background-color:#cdc4bc">Subscribe</button>
+                            </form>
                         </div>
 
                     </div>
@@ -230,6 +241,88 @@
             </table>
             <button onclick="closePopupCart()">Close</button>
         </div>
+
+
+        <?php
+        if (isset($_GET['i_e'])) {
+            $msg = $_GET['i_e'];
+            if ($msg == 'ss') {
+                echo "<script type='text/javascript'>
+            $(document).ready(function(){
+$('#successModal').modal('show');
+});
+            </script>";
+            } else if ($msg == 'alreadyS') {
+                echo "<script type='text/javascript'>
+            $(document).ready(function(){
+$('#failureModal2').modal('show');
+});
+            </script>";
+            } else if ($msg == 'e_f') {
+                echo "<script type='text/javascript'>
+            $(document).ready(function(){
+$('#failureModal1').modal('show');
+});
+            </script>";
+            }
+        }
+        ?>
+
+        <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Subscription....</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <strong class="text-success">is successful!</strong>, from now on keep watch on your email
+                        inbox.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="modal fade" id="failureModal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Subscription....</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <strong class="text-warning">is unsuccessful!</strong>, because you are already subscribed!
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="failureModal1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Subscription....</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <strong class="text-warning">is unsuccessful!</strong> server error probably.
+                        inbox.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"

@@ -112,7 +112,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <a style="text-decoration:none" href="login.php">Already Registered?</a>
+                        <a style="text-decoration:none;" href="login.php">Already Registered?</a>
                     </div>
 
                     <button type="submit" class="btn btn-primary">Submit</button>
