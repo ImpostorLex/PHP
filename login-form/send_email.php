@@ -30,39 +30,32 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav ms-auto align-items-center">
                     <li class="nav-item pt-2 pb-2">
-                        <a href="create.php" class="nav-link py-3 px-2 hovertext" data-hover="Create" title=""
+                        <a href="create.php" class="nav-link py-3 px-2 hovertext" data-hover="Add Product" title=""
                             data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Home">
                             <i class="fa-solid fa-plus fa-lg" style="color:white;"></i>
                         </a>
                     </li>
                     <li class="nav-item pt-2 pb-2">
-                        <a href="" class="nav-link py-3 px-2 hovertext" data-hover="Update" title=""
-                            data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Dashboard">
-                            <i class="fa-solid fa-sharp fa-pen fa-lg" style="color:white;"></i>
-                        </a>
-                    </li>
-                    <li class="nav-item pt-2 pb-2">
-                        <a href="create.php" class="nav-link py-3 px-2 hovertext" data-hover="Create Email" title=""
+                        <a href="send_email.php" class="nav-link py-3 px-2 hovertext" data-hover="Create Email" title=""
                             data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Home">
                             <i class="fa-solid fa-envelope-open-text fa-lg" style="color:white;"></i>
                         </a>
                     </li>
                     <li class="nav-item pt-2 pb-2">
-                        <a href="" class="nav-link py-3 px-2 hovertext" data-hover="Product" title=""
+                        <a href="search.php" class="nav-link py-3 px-2 hovertext" data-hover="Product" title=""
                             data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Dashboard">
                             <i class="fa-solid fa-magnifying-glass fa-lg" style="color:white;"></i>
                         </a>
                     </li>
                     <li class="nav-item pt-2 pb-2">
-                        <a href="" class="nav-link py-3 px-2 hovertext" data-hover="Subscriber" title=""
+                        <a href="email.php" class="nav-link py-3 px-2 hovertext" data-hover="Subscriber" title=""
                             data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Dashboard">
                             <i class="fa-solid fa-envelope fa-lg" style="color:white;"></i>
                         </a>
                     </li>
                     <li class="nav-item pt-2 pb-2">
-                        <a href="{{ url_for('logout') }}" class="nav-link py-3 px-2 hovertext" data-hover="Sign-out"
-                            title="" data-bs-toggle="tooltip" data-bs-placement="right"
-                            data-bs-original-title="Sign-out">
+                        <a href="login.php" class="nav-link py-3 px-2 hovertext" data-hover="Sign-out" title=""
+                            data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Sign-out">
                             <i class="fa-solid fa-right-from-bracket fa-lg" style="color:white;"></i>
                         </a>
                     </li>

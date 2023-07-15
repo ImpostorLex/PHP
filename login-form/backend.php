@@ -479,8 +479,8 @@ function getSubscriber($title, $txtBody, $sender)
             $mail->Host = 'smtp.gmail.com';
             $mail->Port = 587;
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-            $mail->Username = ""; // Your Gmail email address
-            $mail->Password = ''; // Your Gmail password or app-specific password
+            $mail->Username = "navarrojr.dennis@ue.edu.ph"; // Your Gmail email address
+            $mail->Password = 'dennis123456'; // Your Gmail password or app-specific password
 
             $mail->setFrom($sender, 'KantoFoodKing'); // Sender email address and name
 
@@ -489,7 +489,7 @@ function getSubscriber($title, $txtBody, $sender)
             //     $mail->addAddress($email); // Recipient email address
             // }
 
-            $mail->addAddress(""); // Recipient email address
+            $mail->addAddress("navarrojr.dennis@ue.edu.ph"); // Recipient email address
 
 
             $mail->Subject = $title;

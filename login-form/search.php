@@ -58,27 +58,28 @@ if ($mysqli->connect_errno) {
                             </a>
                         </li>
                         <li class="nav-item pt-2 pb-2">
-                            <a href="" class="nav-link py-3 px-2 hovertext active" data-hover="Update" title=""
-                                data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Dashboard">
+                            <a href="send_email.php" class="nav-link py-3 px-2 hovertext" data-hover="Create Email"
+                                title="" data-bs-toggle="tooltip" data-bs-placement="right"
+                                data-bs-original-title="Dashboard">
                                 <i class="fa-solid fa-sharp fa-pen" style="color:white;"></i>
                             </a>
                         </li>
                         <li class="nav-item pt-2 pb-2">
-                            <a href="" class="nav-link py-3 px-2 hovertext" data-hover="Search" title=""
-                                data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Dashboard">
+                            <a href="" class="nav-link py-3 px-2 hovertext active" data-hover="Manipulate Product"
+                                title="" data-bs-toggle="tooltip" data-bs-placement="right"
+                                data-bs-original-title="Dashboard">
                                 <i class="fa-solid fa-magnifying-glass" style="color:white;"></i>
                             </a>
                         </li>
                         <li class="nav-item pt-2 pb-2">
-                            <a href="" class="nav-link py-3 px-2 hovertext" data-hover="Recipes" title=""
+                            <a href="email.php" class="nav-link py-3 px-2 hovertext" data-hover="Subscribers" title=""
                                 data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Dashboard">
                                 <i class="fa-solid fa-envelope" style="color:white;"></i>
                             </a>
                         </li>
                         <li class="nav-item pt-2 pb-2">
-                            <a href="{{ url_for('logout') }}" class="nav-link py-3 px-2 hovertext" data-hover="Sign-out"
-                                title="" data-bs-toggle="tooltip" data-bs-placement="right"
-                                data-bs-original-title="Sign-out">
+                            <a href="login.php" class="nav-link py-3 px-2 hovertext" data-hover="Sign-out" title=""
+                                data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Sign-out">
                                 <i class="fa-solid fa-right-from-bracket" style="color:white;"></i>
                             </a>
                         </li>

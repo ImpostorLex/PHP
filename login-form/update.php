@@ -24,28 +24,34 @@
                     <ul
                         class="nav nav-pills nav-flush pt-5 flex-column mb-auto text-center justify-content-center w-100 px-3 align-items-center">
                         <li class="nav-item pt-2 pb-2">
-                            <a href="" class="nav-link py-3 px-2 hovertext" data-hover="Create" title=""
+                            <a href="create.php" class="nav-link py-3 px-2 hovertext" data-hover="Add Product" title=""
                                 data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Home">
-                                <i class="fa-solid fa-plus" style="color:white;"></i>
+                                <i class="fa-solid fa-plus fa-lg" style="color:white;"></i>
                             </a>
                         </li>
                         <li class="nav-item pt-2 pb-2">
-                            <a href="search.php" class="nav-link py-3 px-2 hovertext" data-hover="Search" title=""
-                                data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Dashboard">
-                                <i class="fa-solid fa-magnifying-glass" style="color:white;"></i>
-                            </a>
-                        </li>
-                        <li class="nav-item pt-2 pb-2">
-                            <a href="" class="nav-link py-3 px-2 hovertext" data-hover="Recipes" title=""
-                                data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Dashboard">
-                                <i class="fa-solid fa-envelope" style="color:white;"></i>
-                            </a>
-                        </li>
-                        <li class="nav-item pt-2 pb-2">
-                            <a href="{{ url_for('logout') }}" class="nav-link py-3 px-2 hovertext" data-hover="Sign-out"
+                            <a href="send_email.php" class="nav-link py-3 px-2 hovertext" data-hover="Create Email"
                                 title="" data-bs-toggle="tooltip" data-bs-placement="right"
-                                data-bs-original-title="Sign-out">
-                                <i class="fa-solid fa-right-from-bracket" style="color:white;"></i>
+                                data-bs-original-title="Home">
+                                <i class="fa-solid fa-envelope-open-text fa-lg" style="color:white;"></i>
+                            </a>
+                        </li>
+                        <li class="nav-item pt-2 pb-2">
+                            <a href="search.php" class="nav-link py-3 px-2 hovertext" data-hover="Product" title=""
+                                data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Dashboard">
+                                <i class="fa-solid fa-magnifying-glass fa-lg" style="color:white;"></i>
+                            </a>
+                        </li>
+                        <li class="nav-item pt-2 pb-2">
+                            <a href="email.php" class="nav-link py-3 px-2 hovertext" data-hover="Subscriber" title=""
+                                data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Dashboard">
+                                <i class="fa-solid fa-envelope fa-lg" style="color:white;"></i>
+                            </a>
+                        </li>
+                        <li class="nav-item pt-2 pb-2">
+                            <a href="login.php" class="nav-link py-3 px-2 hovertext" data-hover="Sign-out" title=""
+                                data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Sign-out">
+                                <i class="fa-solid fa-right-from-bracket fa-lg" style="color:white;"></i>
                             </a>
                         </li>
                     </ul>
