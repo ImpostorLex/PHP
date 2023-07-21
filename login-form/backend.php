@@ -416,23 +416,29 @@ function deleteSubscriber($id)
     if ($mysqli->connect_error) {
         die("Connection failed: " . $mysqli->connect_error);
     } else {
-        $sql = "DELETE FROM subscribed where user_acc_fk = ?";
+        $sql = "DELETE FROM subscribed WHERE user_acc_fk = ?";
         $stmt = $mysqli->prepare($sql);
         $stmt->bind_param("i", $id);
 
         // Execute the prepared statement
         $stmt->execute();
 
+        // Check for errors
+        if ($stmt->error) {
+            die("Delete error: " . $stmt->error);
+        }
+
         // Check the affected rows
         if ($stmt->affected_rows > 0) {
             header("Location: email.php?st_message=e_s");
             exit();
         } else {
-            header("Location: email.php?st_message=e_f");
+            header("Location: email.php?st_message=e_f&id=" . $id);
             exit();
         }
     }
 }
+
 
 function getSubscriber($title, $txtBody, $sender)
 {
@@ -455,7 +461,7 @@ function getSubscriber($title, $txtBody, $sender)
             // Use placeholder for the IN clause based on the number of user IDs
             $placeholders = implode(',', array_fill(0, count($user_ids), '?'));
 
-            $sql2 = "SELECT email, first_name FROM user WHERE id IN ($placeholders) limit 2";
+            $sql2 = "SELECT email, first_name FROM user WHERE id IN ($placeholders)";
             $stmt = $mysqli->prepare($sql2);
 
             // Bind the user IDs as parameters
@@ -480,16 +486,16 @@ function getSubscriber($title, $txtBody, $sender)
             $mail->Port = 587;
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             $mail->Username = "navarrojr.dennis@ue.edu.ph"; // Your Gmail email address
-            $mail->Password = 'dennis123456'; // Your Gmail password or app-specific password
+            $mail->Password = ''; // Your Gmail password or app-specific password
 
             $mail->setFrom($sender, 'KantoFoodKing'); // Sender email address and name
 
             // Add all recipients
-            // foreach ($emails as $email) {
-            //     $mail->addAddress($email); // Recipient email address
-            // }
+            foreach ($emails as $email) {
+                $mail->addAddress($email); // Recipient email address
+            }
 
-            $mail->addAddress("navarrojr.dennis@ue.edu.ph"); // Recipient email address
+            # $mail->addAddress("navarrojr.dennis@ue.edu.ph"); // Recipient email address
 
 
             $mail->Subject = $title;
@@ -550,15 +556,82 @@ function sendNewsletter($title, $txtBody)
 
 }
 
+// function subscribe($email)
+// {
+//     global $servername, $username, $password_db, $db;
+//     $mysqli = new mysqli($servername, $username, $password_db, $db);
+//     echo '<script>console.log("User ID2: ");</script>';
+
+//     if ($mysqli->connect_error) {
+//         echo '<script>console.log("User ID3: ");</script>';
+//         die("Connection failed: " . $mysqli->connect_error);
+//     } else {
+//         $emails = getEmails();
+//         echo '<script>console.log("User ID4:");</script>';
+
+//         // Check if email is registered to the website
+//         if (in_array($email, $emails)) {
+//             // Verify if user is already subscribed
+//             $sql = "SELECT user_id FROM user WHERE email = ?";
+//             $stmt = $mysqli->prepare($sql);
+//             $stmt->bind_param("s", $email);
+//             $stmt->execute();
+//             $result = $stmt->get_result();
+//             echo '<script>console.log("User ID: ");</script>';
+
+//             if ($result->num_rows > 0) {
+//                 while ($row = $result->fetch_assoc()) {
+//                     $user_id = $row['user_id'];
+//                 }
+
+//                 $sql2 = "SELECT COUNT(*) AS count FROM subscribed WHERE user_acc_fk = ?";
+//                 $stmt2 = $mysqli->prepare($sql2);
+//                 $stmt2->bind_param("i", $user_id);
+//                 $stmt2->execute();
+//                 $result2 = $stmt2->get_result();
+
+//                 $row2 = $result2->fetch_assoc();
+//                 $subscriptionCount = $row2['count'];
+//                 echo '<script>console.log("User ID: ' . $user_id . '");</script>';
+
+
+//                 if ($subscriptionCount > 0) {
+//                     header("Location: home.php?i_e=alreadyS");
+//                     exit();
+//                 } else {
+
+//                     echo '<script>console.log("User ID: ' . $user_id . '");</script>';
+//                     $sql3 = "INSERT INTO subscribed (user_acc_fk) VALUES (?)";
+//                     $stmt3 = $mysqli->prepare($sql3);
+//                     $stmt3->bind_param("i", $user_id);
+//                     $stmt3->execute();
+
+//                     if ($stmt3->affected_rows > 0) {
+//                         header("Location: home.php?i_e=ss");
+//                         exit();
+//                     }
+//                 }
+//             } else {
+//                 header("Location: home.php?i_e=e_f");
+//                 exit();
+//             }
+//         }
+//     }
+// }
+
+
 function subscribe($email)
 {
     global $servername, $username, $password_db, $db;
     $mysqli = new mysqli($servername, $username, $password_db, $db);
+    echo '<script>console.log("User ID2: ");</script>';
 
     if ($mysqli->connect_error) {
+        echo '<script>console.log("User ID3: ");</script>';
         die("Connection failed: " . $mysqli->connect_error);
     } else {
         $emails = getEmails();
+        echo '<script>console.log("User ID4:");</script>';
 
         // Check if email is registered to the website
         if (in_array($email, $emails)) {
@@ -568,6 +641,7 @@ function subscribe($email)
             $stmt->bind_param("s", $email);
             $stmt->execute();
             $result = $stmt->get_result();
+            echo '<script>console.log("User ID: ");</script>';
 
             if ($result->num_rows > 0) {
                 while ($row = $result->fetch_assoc()) {
@@ -582,12 +656,14 @@ function subscribe($email)
 
                 $row2 = $result2->fetch_assoc();
                 $subscriptionCount = $row2['count'];
+                echo '<script>console.log("User ID: ' . $user_id . '");</script>';
 
                 if ($subscriptionCount > 0) {
                     header("Location: home.php?i_e=alreadyS");
                     exit();
                 } else {
-                    $sql3 = "INSERT INTO subscribed (id, user_acc_fk) VALUES (0, ?)";
+                    echo '<script>console.log("User ID: ' . $user_id . '");</script>';
+                    $sql3 = "INSERT INTO subscribed (user_acc_fk) VALUES (?)";
                     $stmt3 = $mysqli->prepare($sql3);
                     $stmt3->bind_param("i", $user_id);
                     $stmt3->execute();
@@ -601,6 +677,10 @@ function subscribe($email)
                 header("Location: home.php?i_e=e_f");
                 exit();
             }
+        } else {
+            // Email is not registered
+            header("Location: home.php?i_e=notRegistered");
+            exit();
         }
     }
 }
@@ -690,10 +770,15 @@ if (isset($_POST['formIdentifier'])) {
 
 
     } elseif ($formIdentifier === 'form6') {
-        deleteProd($id);
+
+        if (isset($_POST['id'])) {
+            $id = $_POST['id'];
+            deleteProd($id);
+        }
+
     } elseif ($formIdentifier === 'form7') {
 
-        $id = trim($_POST['search_term']);
+        $id = $_POST['search_term'];
 
         if (isset($id) && !ctype_digit($id)) {
             header("Location: email.php?st_message=not_digit");
@@ -705,7 +790,11 @@ if (isset($_POST['formIdentifier'])) {
         }
     } elseif ($formIdentifier === 'form8') {
 
-        $id = $_POST['id'];
+        $id = intval($_POST['id2']);
+        echo '<script>console.log("ID:", ' . $id . ');</script>';
+
+        // Debugging statement to confirm form submission and data
+        echo 'Form 8 submitted successfully. ID: ' . $id;
 
         deleteSubscriber($id);
 

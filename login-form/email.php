@@ -22,7 +22,9 @@ if ($mysqli->connect_errno) {
         // Use placeholder for the IN clause based on the number of user IDs
         $placeholders = implode(',', array_fill(0, count($user_ids), '?'));
 
-        $sql2 = "SELECT * FROM user WHERE user_id IN ($placeholders)";
+        $sql2 = "SELECT u.first_name, u.last_name, u.email, s.user_acc_fk FROM user AS u
+                 INNER JOIN subscribed AS s ON u.user_id = s.user_acc_fk
+                 WHERE u.user_id IN ($placeholders)";
         $stmt = $mysqli->prepare($sql2);
 
         // Bind the user IDs as parameters
@@ -52,7 +54,7 @@ if ($mysqli->connect_errno) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clinic System</title>
+    <title>KantoFood</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
     <link rel="stylesheet" href="css/styles.css">
@@ -76,8 +78,9 @@ if ($mysqli->connect_errno) {
                             </a>
                         </li>
                         <li class="nav-item pt-2 pb-2">
-                            <a href="" class="nav-link py-3 px-2 hovertext" data-hover="Update" title=""
-                                data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Dashboard">
+                            <a href="send_email.php" class="nav-link py-3 px-2 hovertext" data-hover="Create Email"
+                                title="" data-bs-toggle="tooltip" data-bs-placement="right"
+                                data-bs-original-title="Dashboard">
                                 <i class="fa-solid fa-sharp fa-pen" style="color:white;"></i>
                             </a>
                         </li>
@@ -94,9 +97,8 @@ if ($mysqli->connect_errno) {
                             </a>
                         </li>
                         <li class="nav-item pt-2 pb-2">
-                            <a href="{{ url_for('logout') }}" class="nav-link py-3 px-2 hovertext" data-hover="Sign-out"
-                                title="" data-bs-toggle="tooltip" data-bs-placement="right"
-                                data-bs-original-title="Sign-out">
+                            <a href="login.php" class="nav-link py-3 px-2 hovertext" data-hover="Sign-out" title=""
+                                data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Sign-out">
                                 <i class="fa-solid fa-right-from-bracket" style="color:white;"></i>
                             </a>
                         </li>
@@ -174,7 +176,7 @@ if ($mysqli->connect_errno) {
                             foreach ($emails as $email) { ?>
                                 <tr>
                                     <td>
-                                        <?php echo $email['id']; ?>
+                                        <?php echo $email['user_acc_fk']; ?>
                                     </td>
                                     <td>
                                         <?php echo $email['first_name']; ?>

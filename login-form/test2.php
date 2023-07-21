@@ -18,25 +18,23 @@
             <div class="card-body">
                 <h3 class="card-title text-danger">Delete Confirmation</h3>
                 <!-- confirm_delete.php -->
-                <html>
 
-                <body>
-                    <p></p>Are you sure you want to delete the newsletter subscriber?
-                    <?php echo $_GET['id']; ?>
-                    </p>
-                    <br>
-                    <form method="POST" action="backend.php">
-                        <input type="hidden" name="formIdentifier" value="form8">
-                        <input type="hidden" name="id" value="<?php echo $_GET['id']; ?>">
-                        <button type="submit" class="btn btn-danger" name="confirmationButton"
-                            value="confirm">Confirm</button>
-                        &nbsp;
-                        <a class="btn btn-secondary" href="email.php">Go Back!</a>
-                    </form>
-                </body>
-
-                </html>
-
+                <p></p>Are you sure you want to delete the newsletter subscriber?
+                <?php echo $_GET['id']; ?>
+                </p>
+                <br>
+                <form method="POST" action="backend.php">
+                    <input type="hidden" name="formIdentifier" value="form8">
+                    <input type="hidden" id="id2" name="id2" value="<?php echo $_GET['id']; ?>">
+                    <button type="submit" class="btn btn-danger" name="confirmationButton"
+                        value="confirm">Confirm</button>
+                    &nbsp;
+                    <a class="btn btn-secondary" href="email.php">Go Back!</a>
+                </form>
+                <?php
+                $id = intval($_GET['id']);
+                echo '<script>console.log("ID:", ' . $id . ');</script>';
+                ?>
             </div>
         </div>
     </div>

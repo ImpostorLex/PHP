@@ -77,6 +77,7 @@ function showCart() {
         var quantityCell = row.insertCell();
         var numberField2 = createNumberField(item);
         numberField2.style.width = "80px";
+        numberField2.value = 1;
         quantityCell.appendChild(numberField2);
 
         var removeButtonCell = row.insertCell();
