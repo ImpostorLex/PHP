@@ -11,7 +11,7 @@
 
 <!-- Include the php function for form validation if the form is submitted-->
 <?php
-include 'server.php';
+include 'client-registration.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
@@ -85,7 +85,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 <div class="div">
                     <?php
-                    if ($errormsg) {
+                    if (isset($errormsg)) {
                         echo "<br>" . $errormsg;
                     }
                     ?>

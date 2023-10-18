@@ -61,7 +61,7 @@
                 </form>
                 <div class="div">
                     <?php
-                    if ($errormsg) {
+                    if (isset($errormsg)) {
                         echo "<br>" . $errormsg;
                     }
                     ?>

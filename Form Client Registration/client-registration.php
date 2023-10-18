@@ -2,7 +2,7 @@
 
 $servername = "localhost";
 $username = "root";
-$password_db = "";
+$password_db = "NEW_PASSWORD";
 $db = "simple_registration";
 
 function isLettersOnly($fname, $lName)
