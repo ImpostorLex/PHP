@@ -37,72 +37,91 @@
 
     <div class="container-fluid d-flex justify-content-center">
         <div class="card text-center mx-auto" style="width: 50%; position: absolute; top:15%;">
-            <a href="dashboard.html" class="text-start pt-3 ps-4" style="text-decoration:none;">Go Back</a>
-            <a href="index.php" class="text-start pt-3 ps-4" style="text-decoration:none;">Logout</a>
-
             <div class="card-body">
                 <br>
-                <h1 class="card-title">Existing Users!</h1>
+                <h1 class="card-title">Existing Blogs!</h1>
                 <br>
                 <?php
                 include 'server.php';
 
                 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-                    $result5 = isAddressExist($_POST['addr']);
+                    if (isset($_POST['selected_ids']) && !empty($_POST['selected_ids'])) {
+                        $test = deleteBlog($_POST['selected_ids']);
+                    } else {
+                        $test = "No checkboxes checked.";
+                    }
                 }
 
-                $error_msg = showUser();
+                $error_msg = showBlogs();
                 ?>
                 <div class="table-responsive">
-                    <?php
-                    if ($error_msg == false) {
-                        echo "<br>" . $error_msg;
-                    } else { ?>
+                    <form action="<?php $_SERVER['PHP_SELF'] ?>" method="POST">
                         <table class="table table-bordered">
                             <thead>
                                 <tr>
-                                    <th>First Name</th>
-                                    <th>Last Name</th>
+                                    <th>Select</th>
+                                    <th>Title</th>
+                                    <th>Body</th>
                                     <th>Student Number</th>
-                                    <th>Address</th>
                                     <th>Update</th>
                                     <th>Delete</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php foreach ($error_msg as $row): ?>
+                                <?php if (is_array($error_msg)): ?>
+                                    <?php foreach ($error_msg as $row): ?>
+                                        <tr>
+                                            <td>
+                                                <!-- Add a checkbox input with the value being the record's ID -->
+                                                <input type="checkbox" name="selected_ids[]" value="<?php echo $row['id']; ?>">
+                                            </td>
+                                            <td>
+                                                <?php
+                                                $title = $row['title'];
+                                                echo (strlen($title) > 10) ? substr($title, 0, 10) . "..." : $title;
+                                                ?>
+                                            </td>
+                                            <td>
+                                                <?php
+                                                $body = $row['body'];
+                                                echo (strlen($body) > 20) ? substr($body, 0, 20) . "..." : $body;
+                                                ?>
+                                            </td>
+                                            <td>
+                                                <?php echo $row['st_id']; ?>
+                                            </td>
+                                            <td>
+                                                <a href="server.php?action=editBlog&id=<?php echo $row['id']; ?>">
+                                                    <i class="fa-solid fa-pencil"></i>
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <a href="server.php?action=deleteBlog&id=<?php echo $row['id']; ?>"
+                                                    onclick="return confirmDelete();">
+                                                    <i class="fa-solid fa-trash"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                <?php else: ?>
                                     <tr>
-                                        <td>
-                                            <?php echo $row['first_name']; ?>
-                                        </td>
-                                        <td>
-                                            <?php echo $row['last_name']; ?>
-                                        </td>
-                                        <td>
-                                            <?php echo $row['username']; ?>
-                                        </td>
-                                        <td>
-                                            <?php echo $row['sex']; ?>
-                                        </td>
-                                        <td>
-                                            <a href="server.php?action=edit&id=<?php echo $row['id']; ?>">
-                                                <i class="fa-solid fa-pencil"></i>
-                                            </a>
-                                        </td>
-                                        <td>
-                                            <a href="server.php?action=delete&id=<?php echo $row['id']; ?>"
-                                                onclick="return confirmDelete();">
-                                                <i class="fa-solid fa-trash"></i>
-                                            </a>
-                                        </td>
+                                        <td colspan="6">No blog found.</td>
                                     </tr>
-                                <?php endforeach; ?>
+                                <?php endif; ?>
                             </tbody>
                         </table>
-                    <?php } ?>
+                        <div class="d-flex align-items-center mb-3">
+                            <button type="submit" class="btn btn-danger me-4" name="delete_selected">Delete
+                                Selected</button>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="selectall" name="selectall"
+                                    autocomplete="off" onclick="selectAllCheckboxes()">
+                                <label class="form-check-label" for="selectall">De/select All</label>
+                            </div>
+                        </div>
+                    </form>
                 </div>
-
 
 
                 <p style="color:red;">
@@ -111,6 +130,10 @@
                         echo $error_msg3;
                     } elseif (isset($_GET['edit'])) {
                         echo $_GET['edit'];
+                    } elseif (isset($test)) {
+                        echo $test;
+                    } elseif (isset($_GET['rBlogmsg'])) {
+                        echo $_GET['rBlogmsg'];
                     }
                     ?>
                 </p>
@@ -125,10 +148,8 @@
 
     <script>
         function confirmDelete() {
-            // Show a confirmation dialog to the user.
             var confirmed = window.confirm("Are you sure you want to delete this record?");
 
-            // If the user confirms, proceed with the deletion.
             if (confirmed) {
                 return true; // Continue with the link's href.
             } else {
@@ -167,7 +188,55 @@
     </script>
 
 
+    <div class="container-fluid my-1 fixed-bottom">
 
+        <footer class="bg-dark text-center text-white rounded">
+            <!-- Grid container -->
+            <div class="container p-4 pb-0">
+                <!-- Section: Social media -->
+                <section class="mb-4">
+                    <!-- Facebook -->
+                    <a class="btn btn-outline-light btn-floating m-1" href="#!" role="button"><i
+                            class="fab fa-facebook-f"></i></a>
+
+                    <!-- Twitter -->
+                    <a class="btn btn-outline-light btn-floating m-1" href="#!" role="button"><i
+                            class="fab fa-twitter"></i></a>
+
+                    <!-- Google -->
+                    <a class="btn btn-outline-light btn-floating m-1" href="#!" role="button"><i
+                            class="fab fa-google"></i></a>
+
+                    <!-- Instagram -->
+                    <a class="btn btn-outline-light btn-floating m-1" href="#!" role="button"><i
+                            class="fab fa-instagram"></i></a>
+
+                    <!-- Linkedin -->
+                    <a class="btn btn-outline-light btn-floating m-1" href="#!" role="button"><i
+                            class="fab fa-linkedin-in"></i></a>
+
+                    <!-- Github -->
+                    <a class="btn btn-outline-light btn-floating m-1" href="#!" role="button"><i
+                            class="fab fa-github"></i></a>
+                </section>
+            </div>
+            <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+                © 2023 Copyright:
+                <a class="text-white" href="">Alex Macenas</a>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- Checkbox de/select all function -->
+    <script>
+        function selectAllCheckboxes() {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = !checkbox.checked;
+            });
+        }
+    </script>
 
 
 

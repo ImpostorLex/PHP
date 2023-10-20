@@ -314,6 +314,150 @@ function updateRecord($id, $fName, $lName, $sex, $uName, $password_form, $confir
     }
 }
 
+function showBlogs()
+{
+    global $servername, $username, $password_db, $db;
+    $mysqli = new mysqli($servername, $username, $password_db, $db);
+
+    if ($mysqli->connect_errno) {
+        die("" . $mysqli->connect_error);
+    } else {
+        $sql = "SELECT * FROM date_records";
+        $result = $mysqli->query($sql);
+
+        if ($result->num_rows > 0) {
+            $rows = array();
+            while ($row = $result->fetch_assoc()) {
+                $rows[] = $row;
+            }
+
+            return $rows;
+        } else {
+            return false;
+        }
+    }
+}
+
+function deleteBlog($blog_ids)
+{
+    // blog ids are stored via an array, so we need to implode it to a comma-separated string
+    $idsString = implode(',', $blog_ids);
+
+    global $servername, $username, $password_db, $db;
+    $mysqli = new mysqli($servername, $username, $password_db, $db);
+
+    if ($mysqli->connect_errno) {
+        die("" . $mysqli->connect_error);
+    } else {
+
+        if (!empty($blog_ids)) {
+
+            $sql = "DELETE FROM date_records WHERE id IN ($idsString)";
+            if ($mysqli->query($sql)) {
+                return "Record(s) $idsString successfully deleted";
+            } else {
+                return "Something went wrong: " . $mysqli->error;
+            }
+        } else {
+            return "No checkboxes checked.";
+        }
+    }
+}
+
+function deleteSingleBlog($blog_id)
+{
+    global $servername, $username, $password_db, $db;
+    $mysqli = new mysqli($servername, $username, $password_db, $db);
+
+    if ($mysqli->connect_errno) {
+        return "Server error: " . $mysqli->connect_error;
+    } else {
+        $checkSql = "SELECT id FROM date_records WHERE id = ?";
+        $checkStmt = $mysqli->prepare($checkSql);
+        $checkStmt->bind_param("i", $blog_id);
+
+        if ($checkStmt->execute()) {
+            $checkStmt->store_result();
+
+            if ($checkStmt->num_rows == 0) {
+                $checkStmt->close();
+                return "Blog not found";
+            }
+        } else {
+            $checkStmt->close();
+            return "Error checking for the blog: " . $mysqli->error;
+        }
+
+        $checkStmt->close();
+        $sql = "DELETE FROM date_records WHERE id = ?";
+        $stmt = $mysqli->prepare($sql);
+        $stmt->bind_param("i", $blog_id);
+
+        if ($stmt->execute()) {
+            return "Blog with ID $blog_id has been deleted";
+        } else {
+            return "Error deleting the blog: " . $stmt->error;
+        }
+    }
+}
+
+// Noted
+function editBlog($blog_id)
+{
+    global $servername, $username, $password_db, $db;
+    $mysqli = new mysqli($servername, $username, $password_db, $db);
+
+    if ($mysqli->connect_errno) {
+        return "Server error: " . $mysqli->connect_error;
+    } else {
+        $sql = "SELECT * FROM date_records WHERE id = ?";
+        $stmt = $mysqli->prepare($sql);
+        $stmt->bind_param("i", $blog_id);
+
+        if ($stmt->execute()) {
+            $results = $stmt->get_result();
+
+            if ($results->num_rows === 0) {
+                return "Blog entry not found";
+            } else {
+                // Fetch the result and return it, e.g., as an associative array
+                return $results->fetch_assoc();
+            }
+        } else {
+            return "Error fetching the blog entry: " . $stmt->error;
+        }
+    }
+}
+
+function updateBlog($title, $body, $stid, $id)
+{
+    global $servername, $username, $password_db, $db;
+    $mysqli = new mysqli($servername, $username, $password_db, $db);
+
+    if ($mysqli->connect_errno) {
+        return "Connection error: " . $mysqli->connect_error;
+    } else {
+        $sql = "UPDATE date_records SET
+                title = ?,
+                body = ?,
+                st_id = ?
+                WHERE id = ?";
+
+        $stmt = $mysqli->prepare($sql);
+        $stmt->bind_param("ssii", $title, $body, $stid, $id);
+
+        if ($stmt->execute()) {
+            if ($stmt->affected_rows === 1) {
+                return "Update successful";
+            } else {
+                return "No rows were updated";
+            }
+        } else {
+            return "Error executing update: " . $stmt->error;
+        }
+    }
+}
+
 
 
 if (isset($_GET['action'])) {
@@ -331,8 +475,14 @@ if (isset($_GET['action'])) {
             echo "Record not found!";
         }
     } elseif ($action === 'delete') {
-        // Call the delete function 
         deleteFunction($_GET['id']);
+    } elseif ($action === 'deleteBlog') {
+        $rmsg = deleteSingleBlog($_GET['id']);
+        header("Location: viewpost.php?rBlogmsg=" . $rmsg);
+        exit();
+    } elseif ($action === "editBlog") {
+        header("Location: updateBlog.php?id=" . $_GET['id']);
+        exit();
     } else {
         echo "Invalid action!";
     }
