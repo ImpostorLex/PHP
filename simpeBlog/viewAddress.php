@@ -27,7 +27,7 @@
             <ul class="nav nav-pills">
                 <li class="nav-item"><a href="viewpost.php" class="nav-link" aria-current="page">Posts</a></li>
                 <li class="nav-item"><a href="dashboard.html" class="nav-link">Dashboard</a></li>
-                <li class="nav-item"><a href="" class="nav-link active">Users</a></li>
+                <li class="nav-item"><a href="secret.php" class="nav-link">Users</a></li>
                 <li class="nav-item"><a href="create_post.php" class="nav-link">Create</a></li>
                 <li class="nav-item"><a href="index.php" class="nav-link">Logout</a></li>
             </ul>
@@ -38,17 +38,27 @@
         <div class="card text-center mx-auto" style="width: 50%; position: absolute; top:15%;">
             <div class="card-body">
                 <br>
-                <h1 class="card-title">Existing Users!</h1>
+                <h1 class="card-title">Existing Address!</h1>
                 <br>
                 <?php
                 include 'server.php';
 
                 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-                    $result5 = isAddressExist($_POST['addr']);
+
+                    if (isset($_POST['form_identifier'])) {
+                        $formIdentifier = $_POST['form_identifier'];
+
+                        if ($formIdentifier === 'form1') {
+                            $result5 = isAddressExist($_POST['addr']);
+                        } elseif ($formIdentifier === 'form2') {
+                            $result5 = updateAddress($_POST['address_id'], $_POST['addr']);
+                        }
+                    }
+
                 }
 
-                $error_msg = showUser();
+                $error_msg = showAddresses();
                 ?>
                 <div class="table-responsive">
                     <?php
@@ -58,9 +68,7 @@
                         <table class="table table-bordered">
                             <thead>
                                 <tr>
-                                    <th>First Name</th>
-                                    <th>Last Name</th>
-                                    <th>Student Number</th>
+                                    <th>ID</th>
                                     <th>Address</th>
                                     <th>Update</th>
                                     <th>Delete</th>
@@ -69,25 +77,21 @@
                             <tbody>
                                 <?php foreach ($error_msg as $row): ?>
                                     <tr>
-                                        <td>
-                                            <?php echo $row['first_name']; ?>
+                                        <td id="pID">
+                                            <?php echo $row["id"]; ?>
                                         </td>
                                         <td>
-                                            <?php echo $row['last_name']; ?>
+                                            <?php echo $row['address']; ?>
                                         </td>
                                         <td>
-                                            <?php echo $row['username']; ?>
-                                        </td>
-                                        <td>
-                                            <?php echo $row['sex']; ?>
-                                        </td>
-                                        <td>
-                                            <a href="server.php?action=edit&id=<?php echo $row['id']; ?>">
+                                            <a href="#" data-address="<?php echo $row['id']; ?>" data-bs-toggle="modal"
+                                                data-bs-target="#exampleModal2">
                                                 <i class="fa-solid fa-pencil"></i>
                                             </a>
+
                                         </td>
                                         <td>
-                                            <a href="server.php?action=delete&id=<?php echo $row['id']; ?>"
+                                            <a href="server.php?action=deleteAdd&id=<?php echo $row['id']; ?>"
                                                 onclick="return confirmDelete();">
                                                 <i class="fa-solid fa-trash"></i>
                                             </a>
@@ -99,23 +103,20 @@
                     <?php } ?>
                 </div>
 
-
-
                 <p style="color:red;">
                     <?php
                     if (isset($error_msg3)) {
                         echo $error_msg3;
                     } elseif (isset($_GET['edit'])) {
                         echo $_GET['edit'];
+                    } elseif (isset($_GET['del'])) {
+                        echo $_GET['del'];
                     }
                     ?>
                 </p>
                 <a href="adduser.php" style="text-decoration: none;">Add More User</a> |
                 <a href="" data-bs-toggle="modal" data-bs-target="#exampleModal" style="text-decoration:none;">Add
-                    Address</a> |
-                <a href="viewAddress.php" style="text-decoration:none;">Manage
                     Address</a>
-
 
             </div>
         </div>
@@ -135,6 +136,7 @@
         }
     </script>
 
+    <!-- Add address modal -->
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -144,6 +146,7 @@
                 </div>
                 <div class="modal-body">
                     <form action="<?php $_SERVER['PHP_SELF'] ?>" method="POST">
+                        <input type="hidden" name="form_identifier" value="form1">
                         <div class="mb-3">
                             <label for="addr" class="form-label">Address</label>
                             <input type="text" class="form-control" id="addr" name="addr" required
@@ -155,6 +158,32 @@
             </div>
         </div>
     </div>
+
+    <!-- Update Modal -->
+    <div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Update Address ID: <span
+                            id="modal-address"></span>
+                    </h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="<?php $_SERVER['PHP_SELF'] ?>" method="POST">
+                        <input type="hidden" name="form_identifier" value="form2">
+                        <input type="hidden" name="address_id" id="modal-address-input">
+                        <div class="mb-3">
+                            <label for="addr" class="form-label">Address</label>
+                            <input type="text" class="form-control" id="addr" name="addr" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Update</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <div class="container-fluid my-1 fixed-bottom">
 
@@ -200,10 +229,24 @@
         var result5 = "<?php echo isset($result5) ? $result5 : ''; ?>";
         if (result5) {
             alert(result5);
-            result5 = ''; // Clear the variable
+            result5 = '';
         }
     </script>
 
+    <!-- Get address to be updated script-->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const modal = document.getElementById('exampleModal2');
+            modal.addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                const address = button.getAttribute('data-address');
+                const modalAddress = document.getElementById('modal-address');
+                const modalInput = document.getElementById('modal-address-input');
+                modalAddress.textContent = address;
+                modalInput.value = address;
+            });
+        });
+    </script>
 
 
 

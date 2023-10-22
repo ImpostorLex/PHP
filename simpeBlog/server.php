@@ -50,33 +50,38 @@ function isAddressExist($address)
     if ($mysqli->connect_errno) {
         die("Connection failed: " . $mysqli->connect_error);
     } else {
-        $sql = "SELECT count(*) FROM date WHERE address = ?";
-        $stmt = $mysqli->prepare($sql);
-        $stmt->bind_param("s", $address);
-
-        if ($stmt->execute()) {
-            $stmt->bind_result($count);
-            $stmt->fetch();
-
-            if ($count > 0) {
-                $stmt->close(); // Close the first statement here
-                $mysqli->next_result(); // Move to the next result set
-                return "It seems like that address already exists.";
-            } else {
-                $stmt->close(); // Close the first statement here
-                $mysqli->next_result(); // Move to the next result set
-                $sql2 = "INSERT INTO date (address) values (?)";
-                $stmt2 = $mysqli->prepare($sql2);
-                $stmt2->bind_param("s", $address);
-                $stmt2->execute();
-                return "Address successfully added";
-            }
+        $addr = trim($address);
+        if (empty($addr)) {
+            return "Address is empty";
         } else {
-            echo "Error executing the query: " . $stmt->error;
-        }
+            $sql = "SELECT count(*) FROM date WHERE address = ?";
+            $stmt = $mysqli->prepare($sql);
+            $stmt->bind_param("s", $address);
 
-        $stmt->close();
-        $mysqli->close();
+            if ($stmt->execute()) {
+                $stmt->bind_result($count);
+                $stmt->fetch();
+
+                if ($count > 0) {
+                    $stmt->close(); // Close the first statement here
+                    $mysqli->next_result(); // Move to the next result set
+                    return "It seems like that address already exists.";
+                } else {
+                    $stmt->close(); // Close the first statement here
+                    $mysqli->next_result(); // Move to the next result set
+                    $sql2 = "INSERT INTO date (address) values (?)";
+                    $stmt2 = $mysqli->prepare($sql2);
+                    $stmt2->bind_param("s", $address);
+                    $stmt2->execute();
+                    return "Address successfully added";
+                }
+            } else {
+                echo "Error executing the query: " . $stmt->error;
+            }
+
+            $stmt->close();
+            $mysqli->close();
+        }
     }
 }
 
@@ -458,6 +463,99 @@ function updateBlog($title, $body, $stid, $id)
     }
 }
 
+function showAddresses()
+{
+    global $servername, $username, $password_db, $db;
+    $mysqli = new mysqli($servername, $username, $password_db, $db);
+
+    if ($mysqli->connect_errno) {
+        return "Server error: " . $mysqli->connect_error;
+    } else {
+        $sql = "SELECT * FROM date";
+
+        $result = $mysqli->query($sql);
+        if ($result->num_rows > 0) {
+            $rows = array();
+            while ($row = $result->fetch_assoc()) {
+                $rows[] = $row;
+            }
+
+            return $rows;
+        } else {
+            return false;
+        }
+
+    }
+}
+
+function updateAddress($id, $addr)
+{
+    global $servername, $username, $password_db, $db;
+    $mysqli = new mysqli($servername, $username, $password_db, $db);
+
+    if ($mysqli->connect_errno) {
+        return "Connection error: " . $mysqli->connect_error;
+    } else {
+        $addr = trim($addr);
+        if (empty($addr)) {
+            return "Address is empty";
+        } else {
+            $sql = "UPDATE date SET
+                address = ?
+                WHERE id = ?";
+
+            $stmt = $mysqli->prepare($sql);
+            $stmt->bind_param("si", $addr, $id);
+
+            if ($stmt->execute()) {
+                if ($stmt->affected_rows === 1) {
+                    return "Update successful";
+                } else {
+                    return "No rows were updated";
+                }
+            } else {
+                return "Error executing update: " . $stmt->error;
+            }
+        }
+    }
+
+}
+
+function deleteAddress($id)
+{
+    global $servername, $username, $password_db, $db;
+    $mysqli = new mysqli($servername, $username, $password_db, $db);
+    if ($mysqli->connect_errno) {
+        return "" . $mysqli->connect_error;
+    } else {
+        $checkSql = "SELECT id FROM date WHERE id = ?";
+        $checkStmt = $mysqli->prepare($checkSql);
+        $checkStmt->bind_param("i", $id);
+
+        if ($checkStmt->execute()) {
+            $checkStmt->store_result();
+
+            if ($checkStmt->num_rows == 0) {
+                $checkStmt->close();
+                return "Address not found";
+            }
+        } else {
+            $checkStmt->close();
+            return "Error checking for the Address: " . $mysqli->error;
+        }
+
+        $checkStmt->close();
+        $sql = "DELETE FROM date WHERE id = ?";
+        $stmt = $mysqli->prepare($sql);
+        $stmt->bind_param("i", $id);
+
+        if ($stmt->execute()) {
+            return "Address with ID $id has been deleted";
+        } else {
+            return "Error deleting the Address: " . $stmt->error;
+        }
+    }
+}
 
 
 if (isset($_GET['action'])) {
@@ -483,6 +581,11 @@ if (isset($_GET['action'])) {
     } elseif ($action === "editBlog") {
         header("Location: updateBlog.php?id=" . $_GET['id']);
         exit();
+    } elseif ($action == "deleteAdd") {
+        $msg = deleteAddress($_GET["id"]);
+        header("Location: viewAddress.php?del=" . $msg);
+        exit();
+
     } else {
         echo "Invalid action!";
     }
